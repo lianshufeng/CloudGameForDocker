@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+  springboot:
+    image: lianshufeng/springboot:jdk17
+    ports:
+      - "8080:8080"
+    volumes:
+      - "./:/opt/jar"
+    working_dir: /opt/jar
+    container_name: app
+    restart: always
+    command: nohup java -Dfile.encoding=UTF-8 -Xmx1000m -Xms600m -Duser.timezone=GMT+8 -Dspring.profiles.active=dev -jar CloudGameForDocker-1.0.0-SNAPSHOT.jar

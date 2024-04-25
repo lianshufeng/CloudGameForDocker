@@ -1,0 +1,4 @@
+cloud:
+  game:
+    token: xiaofeng
+    workspace-path: E:/git/github/MicroService/application/CloudGameForDocker/target/classes

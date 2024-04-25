@@ -1,0 +1,20 @@
+# IDE specific files
+/.idea/
+*.iml
+*.log
+*.gz
+
+# log
+/logs/
+
+# Compiler generated files
+target/
+
+
+# jrebel
+rebel.xml
+
+
+
+/src/main/resources/store/cores
+/src/main/resources/store/games
