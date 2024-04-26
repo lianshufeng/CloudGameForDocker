@@ -33,13 +33,23 @@ public class DiskHelper extends ApplicationHomeHelper {
 
     /**
      * 获取核心路径
+     *
      * @return
      */
     public File getCoresPath() {
         return makePath(cloudGameConf.getStorePath(), "cores");
     }
 
-    public File getGameConfPath(){
+
+    /**
+     * 取出nginx路径
+     * @return
+     */
+    public File getNginxConPath() {
+        return makePath(cloudGameConf.getStorePath(), "nginx.conf");
+    }
+
+    public File getGameConfPath() {
         return makePath(cloudGameConf.getGameConfPath());
     }
 

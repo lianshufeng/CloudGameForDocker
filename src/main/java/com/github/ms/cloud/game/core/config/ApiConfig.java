@@ -24,7 +24,9 @@ public class ApiConfig extends SwaggerConfiguration {
                     .in(ParameterIn.HEADER.toString())
                     .required(false)
                     .schema(new StringSchema()._default(""))
-                    .name("token"));
+                    .name("token")
+                    .example("password!@#")
+            );
 
             return operation;
         };

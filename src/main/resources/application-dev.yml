@@ -1,4 +1,11 @@
 cloud:
   game:
-    token: xiaofeng
+    token: password!@#
     workspace-path: E:/git/github/MicroService/application/CloudGameForDocker/target/classes
+    ssl:
+      enabled: true
+      domain: game.jpy.wang
+      certificate: /certs/fullchain.pem
+      certificate-key: /certs/privkey.pem
+    docker:
+      api-version: ""

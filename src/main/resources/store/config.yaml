@@ -65,11 +65,11 @@ coordinator:
     tls:
       address: :443
       # allowed host name
-      domain:
+      domain: game.jpy.wang
       # if both are set then will use certs
       # and Letsencryt instead
-      httpsCert:
-      httpsKey:
+      httpsCert: /certs/fullchain.pem
+      httpsKey: /certs/privkey.pem
   analytics:
     inject: false
     gtag:

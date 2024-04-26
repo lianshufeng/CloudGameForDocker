@@ -40,6 +40,7 @@ public class CreateCommand {
 
 
 
+
     @Data
     @Builder
     @AllArgsConstructor
@@ -57,6 +58,10 @@ public class CreateCommand {
         //端口
         @JsonProperty("PortBindings")
         private Map<String, Object[]> PortBindings;
+
+
+        @JsonProperty("Links")
+        private String[] Links;
 
     }
 

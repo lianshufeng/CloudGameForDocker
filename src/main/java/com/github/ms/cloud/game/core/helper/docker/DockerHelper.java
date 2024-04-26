@@ -20,14 +20,29 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 @Component
 public class DockerHelper {
 
     private static final String DockerSock = "/var/run/docker.sock";
-    private static final String ApiVersion = "v1.45";
 
+    @Autowired
+    private CloudGameConf gameConf;
+
+
+    @SneakyThrows
+    public Map<String, Object> imagesJson(String name) {
+        String ret = _get(String.format("images/%s/json", name));
+        return JsonUtil.toObject(ret, Map.class);
+    }
+
+    @SneakyThrows
+    public Map<String, Object> imagesCreate(String name) {
+        String ret = _post(String.format("images/create?fromImage=%s", name), Map.of());
+        return JsonUtil.toObject(ret, Map.class);
+    }
 
     /**
      * 创建容器
@@ -49,7 +64,7 @@ public class DockerHelper {
 
     @SneakyThrows
     public List<Map<String, Object>> containersList(String filters) {
-        String ret = _get("containers/json?filters=" + filters);
+        String ret = _get("containers/json" + (StringUtils.hasText(filters) ? "?filters=" + filters : ""));
         return (List<Map<String, Object>>) JsonUtil.toObject(ret, Object.class);
     }
 
@@ -82,25 +97,22 @@ public class DockerHelper {
 
 
     private String _delete(String url) {
-        String cmd = String.format("curl --unix-socket %s -X DELETE http://localhost/%s/%s", DockerSock,// docker.sock
-                ApiVersion,//api
+        String cmd = String.format("curl --unix-socket %s -X DELETE http://localhost/%s", DockerSock,// docker.sock
                 url // 路径
         );
         return _runCmd(cmd);
     }
 
     private String _get(String url) {
-        String cmd = String.format("curl --unix-socket %s -X GET http://localhost/%s/%s", DockerSock,// docker.sock
-                ApiVersion,//api
+        String cmd = String.format("curl --unix-socket %s -X GET http://localhost/%s", DockerSock,// docker.sock
                 url // 路径
         );
         return _runCmd(cmd);
     }
 
     private String _post(String url, Object parameter) {
-        String cmd = String.format("curl --unix-socket %s -H \"Content-Type: application/json\" -d '%s'  -X POST http://localhost/%s/%s", DockerSock,// docker.sock
+        String cmd = String.format("curl --unix-socket %s -H \"Content-Type: application/json\" -d '%s'  -X POST http://localhost/%s", DockerSock,// docker.sock
                 JsonUtil.toJson(parameter),//参数
-                ApiVersion,//api
                 url // 路径
         );
         return _runCmd(cmd);
@@ -112,7 +124,7 @@ public class DockerHelper {
         @Cleanup("delete") File tempFile = File.createTempFile("cmd_", ".sh");
         FileUtils.writeStringToFile(tempFile, cmd, StandardCharsets.UTF_8);
         Process pr = Runtime.getRuntime().exec(new String[]{"bash", tempFile.getAbsolutePath()});
-        pr.waitFor();
+        pr.waitFor(5, TimeUnit.SECONDS);
         @Cleanup InputStream inputStream = pr.getInputStream();
         String ret = StreamUtils.copyToString(inputStream, Charset.forName("UTF-8"));
         log.info("ret : {}", ret);
