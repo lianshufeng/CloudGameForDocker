@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @RestController
 @RequestMapping("v1/room")
-public class V1RoomController {
+public class V1RoomController  {
 
     @Autowired
     @Delegate
@@ -93,9 +93,7 @@ public class V1RoomController {
     @SneakyThrows
     @Operation(summary = "创建房间", description = "创建房间")
     @RequestMapping(value = "create", method = RequestMethod.POST)
-    public ResultContent<Object> create(
-            @Schema(name = "gamePath", example = "/dino.zip,/other/madcell.sfc", description = "游戏路径") @RequestParam(value = "gamePath") String[] gamePath
-    ) {
+    public ResultContent<Object> create(@Schema(name = "gamePath", example = "/dino.zip,/other/madcell.sfc", description = "游戏路径") @RequestParam(value = "gamePath") String[] gamePath) {
         this.auth();
 
         //随机端口
@@ -111,16 +109,17 @@ public class V1RoomController {
         // game
         final CreateCommand gameRunCommand = JsonUtil.toObject(JsonUtil.toJson(cloudGameConf.getDocker().getCloudGameTemplate()), CreateCommand.class);
 
-        final String[] binds = ArrayUtils.addAll(
-                new String[]{
-                        this.cloudGameConf.getStoreDir() + "/config.yaml:/usr/local/share/cloud-game/configs/config.yaml", // 配置文化部
-                        this.cloudGameConf.getStoreDir() + "/cores:/usr/local/share/cloud-game/assets/cores", //模拟器核心
-                        this.cloudGameConf.getStoreDir() + "/certs:/certs"
-                },
-                Arrays.stream(gamePath).map(it -> {
-                    return this.cloudGameConf.getStoreDir() + "/games/" + it + ":/usr/local/share/cloud-game/assets/games/" + it;
-                }).toArray(String[]::new)
-        );
+        List<String> gameMounts = new ArrayList<>() {{
+            add(cloudGameConf.getStoreDir() + "/config.yaml:/usr/local/share/cloud-game/configs/config.yaml");
+            add(cloudGameConf.getStoreDir() + "/cores:/usr/local/share/cloud-game/assets/cores");
+            add(cloudGameConf.getStoreDir() + "/certs:/certs");
+            add(cloudGameConf.getStoreDir() + "/web:/usr/local/share/cloud-game/web");
+        }};
+
+
+        final String[] binds = ArrayUtils.addAll(gameMounts.toArray(String[]::new), Arrays.stream(gamePath).map(it -> {
+            return this.cloudGameConf.getStoreDir() + "/games/" + it + ":/usr/local/share/cloud-game/assets/games/" + it;
+        }).toArray(String[]::new));
 
         //挂载模拟器和游戏
         gameRunCommand.getHostConfig().setBinds(binds);

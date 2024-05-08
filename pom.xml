@@ -49,6 +49,7 @@
                         <nonFilteredFileExtension>zip</nonFilteredFileExtension>
                         <nonFilteredFileExtension>sfc</nonFilteredFileExtension>
                         <nonFilteredFileExtension>pem</nonFilteredFileExtension>
+                        <nonFilteredFileExtension>woff2</nonFilteredFileExtension>
                     </nonFilteredFileExtensions>
                 </configuration>
             </plugin>
